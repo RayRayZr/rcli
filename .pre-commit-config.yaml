@@ -23,14 +23,14 @@ repos:
         entry: bash -c 'cargo fmt -- --check'
         language: rust
         files: \.rs$
-        args: []
+        args: [ ]
       - id: cargo-deny
         name: cargo deny check
         description: Check cargo dependencies
         entry: bash -c 'cargo deny check -d'
         language: rust
         files: \.rs$
-        args: []
+        args: [ ]
       - id: typos
         name: typos
         description: check typo
@@ -56,6 +56,13 @@ repos:
         name: cargo test
         description: unit test for the project
         entry: bash -c 'cargo nextest run --all-features'
+        language: rust
+        files: \.rs$
+        pass_filenames: false
+      - id: git-change-log
+        name: git change log
+        description: Generate a change log from git commits
+        entry: bash -c 'git cliff -o'
         language: rust
         files: \.rs$
         pass_filenames: false
