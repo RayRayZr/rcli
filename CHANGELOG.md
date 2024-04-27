@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. See [conven
 
 - add csv to json cli - ([e15189b](https://github.com/ZRruirui/rcli/commit/e15189b77d41509ef49d34c63a10769f15c13625)) - rayray
 - add csv to json and yaml file - ([0e8f450](https://github.com/ZRruirui/rcli/commit/0e8f450cd766cc1b13dec2f883385e8efc766f6d)) - rayray
+- add password gen - ([f831d95](https://github.com/ZRruirui/rcli/commit/f831d958cabc52eb8919eb2b2e327d55bc9faf24)) - rayray
 
 ### Miscellaneous Chores
 

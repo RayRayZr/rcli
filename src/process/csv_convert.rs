@@ -1,4 +1,4 @@
-use crate::opts::OutputFormat;
+use crate::csv_convert::OutputFormat;
 use csv::{Reader, StringRecord};
 use serde::{Deserialize, Serialize};
 use std::fs;

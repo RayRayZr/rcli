@@ -1,5 +1,7 @@
 use clap::Parser;
-use rcli::{process_csv, process_genpass, Opts, OutputFormat, Subcommand};
+use rcli::csv_convert::OutputFormat;
+use rcli::{process_csv, process_genpass};
+use rcli::{Opts, Subcommand};
 use std::path::Path;
 
 fn main() -> anyhow::Result<()> {
@@ -34,6 +36,7 @@ fn main() -> anyhow::Result<()> {
             ops.symbol,
             ops.length,
         ),
+        _ => {}
     }
     Ok(())
 }
