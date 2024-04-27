@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file. See [conven
 ### Miscellaneous Chores
 
 - replace git diff url - ([9a7beaf](https://github.com/ZRruirui/rcli/commit/9a7beaf7c6af8d19ee2dddc958786175dc23a926)) - rayray
+- add git change pre-commit - ([601184f](https://github.com/ZRruirui/rcli/commit/601184fb6e090380682ef5157d91f733f812a94b)) - rayray
 
 ### Other
 
