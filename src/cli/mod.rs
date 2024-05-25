@@ -1,9 +1,14 @@
-pub mod base64;
+pub mod b64;
 pub mod csv_convert;
 pub mod gen_pass;
-use crate::base64::Base64Opts;
+pub mod http;
+pub mod text;
+
+use crate::b64::Base64SubCommand;
+use crate::cli::text::TextSubCommand;
 use crate::csv_convert::CsvOpts;
 use crate::gen_pass::GenPassOpts;
+use crate::http::HTTPSubCommand;
 use clap::Parser;
 
 #[derive(Debug, Parser)]
@@ -20,6 +25,12 @@ pub enum Subcommand {
     #[command(name = "genpass", about = "Generate random password")]
     GenPass(GenPassOpts),
 
-    #[command(name = "base64", about = "Base64 encode/decode")]
-    Base64(Base64Opts),
+    #[command(subcommand)]
+    Base64(Base64SubCommand),
+
+    #[command(subcommand)]
+    Text(TextSubCommand),
+
+    #[command(subcommand)]
+    Http(HTTPSubCommand),
 }

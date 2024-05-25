@@ -1,3 +1,4 @@
+use anyhow::Result;
 use rand::seq::SliceRandom;
 use zxcvbn::zxcvbn;
 
@@ -6,7 +7,13 @@ const LOWERCASE: &[u8] = b"abacdefghijkmnopqrstuvwxyz";
 const NUMBER: &[u8] = b"123456789";
 const SYMBOL: &[u8] = b"!@#$%^&*_";
 
-pub fn process_genpass(uppercase: bool, lowercase: bool, number: bool, symbol: bool, length: u8) {
+pub fn process_genpass(
+    uppercase: bool,
+    lowercase: bool,
+    number: bool,
+    symbol: bool,
+    length: u8,
+) -> Result<String> {
     let mut rng = rand::thread_rng();
     let mut password = Vec::new();
     let mut chars = Vec::new();
@@ -38,9 +45,10 @@ pub fn process_genpass(uppercase: bool, lowercase: bool, number: bool, symbol: b
 
     let password = String::from_utf8(password).unwrap();
     // 打印密码
-    println!("{}", password);
+    print!("{}", password);
 
     // 打印强度
     let estimate = zxcvbn(&password, &[]).unwrap();
     eprintln!("密码强度: {}", estimate.score());
+    Ok(password)
 }

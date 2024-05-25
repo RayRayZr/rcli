@@ -1,6 +1,6 @@
+use crate::utils::verify_input_file;
 use clap::Parser;
 use std::fmt::Display;
-use std::path::Path;
 use std::str::FromStr;
 
 #[derive(Debug, Clone, Copy)]
@@ -53,12 +53,4 @@ impl FromStr for OutputFormat {
 
 fn parser_formatter(value: &str) -> Result<OutputFormat, anyhow::Error> {
     value.parse()
-}
-
-fn verify_input_file(filename: &str) -> Result<String, &'static str> {
-    if Path::new(filename).exists() {
-        Ok(filename.into())
-    } else {
-        Err("File does not exists")
-    }
 }
