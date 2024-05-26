@@ -1,3 +1,4 @@
+use crate::{process_genpass, CmdExecutor};
 use clap::Parser;
 
 #[derive(Debug, Parser)]
@@ -16,4 +17,18 @@ pub struct GenPassOpts {
 
     #[arg(long, default_value_t = true)]
     pub symbol: bool,
+}
+
+impl CmdExecutor for GenPassOpts {
+    async fn execute(&self) -> anyhow::Result<()> {
+        let pass = process_genpass(
+            self.uppercase,
+            self.lowercase,
+            self.number,
+            self.symbol,
+            self.length,
+        )?;
+        println!("{}", pass);
+        Ok(())
+    }
 }

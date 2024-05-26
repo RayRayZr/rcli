@@ -1,3 +1,4 @@
+use crate::{decode_base64, encode_base64, CmdExecutor};
 use anyhow::anyhow;
 use clap::Parser;
 use std::str::FromStr;
@@ -48,5 +49,16 @@ impl FromStr for Base64Format {
             "url" => Ok(Base64Format::Url),
             _ => Err(anyhow!("Invalid base64 format")),
         }
+    }
+}
+
+impl CmdExecutor for Base64SubCommand {
+    async fn execute(&self) -> anyhow::Result<()> {
+        match self {
+            Base64SubCommand::Encode(opts) => encode_base64(&opts.input, opts.formatter.clone()),
+            Base64SubCommand::Decode(opts) => decode_base64(&opts.input, opts.formatter.clone()),
+        }
+        .expect("TODO: panic message");
+        Ok(())
     }
 }

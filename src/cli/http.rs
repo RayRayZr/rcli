@@ -1,4 +1,5 @@
 use crate::utils::verify_path;
+use crate::{process_http_serve, CmdExecutor};
 use clap::Parser;
 use std::path::PathBuf;
 
@@ -15,4 +16,12 @@ pub struct ServeOpts {
 pub enum HTTPSubCommand {
     #[command(name = "server", about = "http server")]
     Server(ServeOpts),
+}
+
+impl CmdExecutor for HTTPSubCommand {
+    async fn execute(&self) -> anyhow::Result<()> {
+        match self {
+            HTTPSubCommand::Server(opts) => process_http_serve(opts.dir.clone(), opts.port).await,
+        }
+    }
 }

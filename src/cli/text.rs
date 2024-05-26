@@ -1,4 +1,5 @@
 use crate::utils::{verify_input, verify_input_file};
+use crate::{generate_key, process_decrypt, process_encrypt, sign_text, verify_text, CmdExecutor};
 use clap::Parser;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
@@ -13,6 +14,30 @@ pub enum TextSubCommand {
 
     #[command(name = "generate-key", about = "generate key pair")]
     GenerateKey(GenerateKeyOpts),
+
+    #[command(name = "encrypt", about = "encrypt text")]
+    Encrypt(EncryptOpts),
+
+    #[command(name = "decrypt", about = "encrypt text")]
+    Decrypt(DecryptOpts),
+}
+
+#[derive(Debug, Parser)]
+pub struct EncryptOpts {
+    #[arg(short, long)]
+    key: String,
+
+    #[arg(short, long, value_parser = verify_input)]
+    input: String,
+}
+
+#[derive(Debug, Parser)]
+pub struct DecryptOpts {
+    #[arg(short, long)]
+    key: String,
+
+    #[arg(short, long, value_parser = verify_input)]
+    input: String,
 }
 
 #[derive(Debug, Parser)]
@@ -85,5 +110,34 @@ impl From<TextSignFormatter> for &'static str {
 impl Display for TextSignFormatter {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "textformatter:{}", Into::<&str>::into(*self))
+    }
+}
+
+impl CmdExecutor for TextSubCommand {
+    async fn execute(&self) -> anyhow::Result<()> {
+        match self {
+            TextSubCommand::Sign(opts) => {
+                sign_text(&opts.input, &opts.key, opts.formatter)?;
+                Ok(())
+            }
+            TextSubCommand::Verify(opts) => {
+                verify_text(&opts.input, &opts.key, &opts.signature, opts.formatter)?;
+                Ok(())
+            }
+            TextSubCommand::GenerateKey(opts) => {
+                generate_key(opts.formatter, &opts.output)?;
+                Ok(())
+            }
+            TextSubCommand::Encrypt(opts) => {
+                let str = process_encrypt(&opts.input, &opts.key)?;
+                println!("{}", str);
+                Ok(())
+            }
+            TextSubCommand::Decrypt(opts) => {
+                let str = process_decrypt(&opts.input, &opts.key)?;
+                println!("{}", str);
+                Ok(())
+            }
+        }
     }
 }

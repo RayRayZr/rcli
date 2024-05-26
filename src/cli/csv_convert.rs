@@ -1,4 +1,5 @@
 use crate::utils::verify_input_file;
+use crate::{process_csv, CmdExecutor};
 use clap::Parser;
 use std::fmt::Display;
 use std::str::FromStr;
@@ -28,6 +29,16 @@ pub struct CsvOpts {
 
     #[arg(long, default_value = "json", value_parser=parser_formatter)]
     pub formatter: OutputFormat,
+}
+
+impl CmdExecutor for CsvOpts {
+    async fn execute(&self) -> anyhow::Result<()> {
+        process_csv(
+            &self.input,
+            self.output.clone().unwrap_or_else(|| "-".to_string()),
+            self.formatter,
+        )
+    }
 }
 
 impl From<OutputFormat> for &'static str {

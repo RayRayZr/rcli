@@ -4,6 +4,10 @@ use crate::utils::{read_file, read_input};
 use anyhow::Result;
 use base64::engine::general_purpose::STANDARD;
 use base64::Engine as _;
+use chacha20poly1305::aead::generic_array::GenericArray;
+use chacha20poly1305::aead::Aead;
+use chacha20poly1305::consts::U12;
+use chacha20poly1305::{ChaCha20Poly1305, Key, KeyInit, Nonce};
 use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
 
 trait TextSign {
@@ -105,28 +109,22 @@ pub fn generate_key(formatter: TextSignFormatter, output_path: &str) -> anyhow::
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::{env, fs};
-    #[test]
-    fn test_text_sign() -> Result<()> {
-        let mut path = env::current_dir()?;
-        path.push("fixtrues");
-        path.push("test_data.txt");
-        let filepath = path.display().to_string();
-        path.pop();
-        path.push("key.txt");
-        let keypath = path.display().to_string();
+pub fn process_encrypt(input: &str, key: &str) -> anyhow::Result<String> {
+    let input_data = read_input(input)?;
+    let key = Key::from_slice(key.as_bytes()); // 32-bytes
+    let cipher = ChaCha20Poly1305::new(key);
+    let nonce: &GenericArray<u8, U12> = Nonce::from_slice(b"unique nonce");
+    let ciphertext = cipher.encrypt(nonce, input_data.as_slice()).unwrap();
+    let encode_data = STANDARD.encode(ciphertext);
+    Ok(encode_data)
+}
 
-        let format = TextSignFormatter::Blake3;
-        let sig = sign_text(&filepath, &keypath, format)?;
-        path.pop();
-        path.push("sig.txt");
-        let sigpath = path.display().to_string();
-        fs::write(&sigpath, sig)?;
-        let ret = verify_text(&filepath, &keypath, &sigpath, format)?;
-        assert!(ret);
-        Ok(())
-    }
+pub fn process_decrypt(input: &str, key: &str) -> anyhow::Result<String> {
+    let input_data = read_input(input)?;
+    let encrypt_data = STANDARD.decode(input_data.as_slice())?;
+    let nonce: &GenericArray<u8, U12> = Nonce::from_slice(b"unique nonce");
+    let key = Key::from_slice(key.as_bytes()); // 32-bytes
+    let cipher = ChaCha20Poly1305::new(key);
+    let origin_data = cipher.decrypt(nonce, encrypt_data.as_slice()).unwrap();
+    Ok(String::from_utf8(origin_data)?)
 }

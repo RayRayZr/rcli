@@ -2,14 +2,17 @@ pub mod b64;
 pub mod csv_convert;
 pub mod gen_pass;
 pub mod http;
+pub mod myjwt;
 pub mod text;
 
-use crate::b64::Base64SubCommand;
-use crate::cli::text::TextSubCommand;
-use crate::csv_convert::CsvOpts;
-use crate::gen_pass::GenPassOpts;
-use crate::http::HTTPSubCommand;
+pub use crate::b64::Base64SubCommand;
+pub use crate::csv_convert::CsvOpts;
+pub use crate::gen_pass::GenPassOpts;
+pub use crate::http::HTTPSubCommand;
+pub use crate::myjwt::JWTSubCommand;
+pub use crate::text::*;
 use clap::Parser;
+use enum_dispatch::enum_dispatch;
 
 #[derive(Debug, Parser)]
 #[command(name="rcli",version,author,about,long_about=None)]
@@ -18,6 +21,7 @@ pub struct Opts {
     pub cmd: Subcommand,
 }
 #[derive(Debug, Parser)]
+#[enum_dispatch(CmdExecutor)]
 pub enum Subcommand {
     #[command(name = "csv")]
     Csv(CsvOpts),
@@ -33,4 +37,7 @@ pub enum Subcommand {
 
     #[command(subcommand)]
     Http(HTTPSubCommand),
+
+    #[command(subcommand)]
+    JWT(JWTSubCommand),
 }
